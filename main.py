@@ -21,7 +21,27 @@ def main():
     rg = RetrieveGlobal()
     rg.update_data()
 
-    # merge and save to json
+    world_to_json()
+    canada_to_json()
+
+
+def group_age(age):
+    """Group age."""
+    if (age == 'Not Reported') | (pd.isna(age)):
+        return 'N/A'
+    groups = ['<20'] + ['{}0-{}9'.format(x, x) for x in np.arange(2, 12)]
+    if age in groups:
+        return age
+    num = int(re.sub('-', '', re.findall(r'\d+-?', age)[0]))
+    if num < 20:
+        return groups[0]
+    if re.match('^<', age):
+        return groups[int(num/10)-2]
+    return groups[int(num/10)-1]
+
+
+def world_to_json():
+    """Save world data as json."""
     wrld_cases = pd.read_csv('data/World-confirmed.csv')
     wrld_mortality = pd.read_csv('data/World-deaths.csv')
     wrld_recovered = pd.read_csv('data/World-recovered.csv')
@@ -69,6 +89,9 @@ def main():
     wrld_recovered.to_json('data/worldMortality.json', orient='records')
     wrld_recovered.to_json('data/worldRecovered.json', orient='records')
 
+
+def canada_to_json():
+    """Save Canada data as json."""
     can_cases = pd.read_csv('data/Canada-Cases.csv')
     can_mortality = pd.read_csv('data/Canada-Mortality.csv')
     can_recovered = pd.read_csv('data/Canada-Recovered.csv')
@@ -104,8 +127,10 @@ def main():
         lambda g: g['cumulative'].diff()).fillna(0).values
     can_recovered = can_recovered[can_recovered['count_recovered'] > 0].copy()
 
-    can_cases = can_cases.groupby(['province', 'age', 'date']).count()
-    can_mortality = can_mortality.groupby(['province', 'age', 'date']).count()
+    can_cases = can_cases.groupby(
+        ['province', 'age', 'date']).count().reset_index()
+    can_mortality = can_mortality.groupby(
+        ['province', 'age', 'date']).count().reset_index()
 
     can_cases['num_days'] = can_cases.groupby('province').apply(
         lambda x: (x['date'] - x['date'].min()).dt.days).values
@@ -123,21 +148,6 @@ def main():
         'data/canadaMortality.json', orient='records')
     can_recovered.to_json(
         'data/canadaRecovered.json', orient='records')
-
-
-def group_age(age):
-    """Group age."""
-    if (age == 'Not Reported') | (pd.isna(age)):
-        return 'N/A'
-    groups = ['<20'] + ['{}0-{}9'.format(x, x) for x in np.arange(2, 12)]
-    if age in groups:
-        return age
-    num = int(re.sub('-', '', re.findall(r'\d+-?', age)[0]))
-    if num < 20:
-        return groups[0]
-    if re.match('^<', age):
-        return groups[int(num/10)-2]
-    return groups[int(num/10)-1]
 
 
 if __name__ == '__main__':
