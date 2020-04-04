@@ -42,19 +42,32 @@ def main():
     )[['Country/Region', 'date', 'count_recovered']]
     wrld_recovered = wrld_recovered[wrld_recovered['count_recovered'] > 0]
 
-    wrld = wrld_cases.merge(
-        wrld_mortality, on=['Country/Region', 'date'], how='outer'
-        ).merge(
-        wrld_recovered, on=['Country/Region', 'date'], how='outer'
-        )
-    wrld = wrld.rename(columns={'Country/Region': 'country'})
-    wrld['date'] = pd.to_datetime(wrld['date'])
-    wrld['date_str'] = wrld['date'].dt.strftime('%Y-%m-%d')
-    wrld = wrld.sort_values(['country', 'date'])
-    wrld['num_days'] = wrld.groupby('country').apply(
+    wrld_cases = wrld_cases.rename(columns={'Country/Region': 'country'})
+    wrld_cases['date'] = pd.to_datetime(wrld_cases['date'])
+    wrld_cases['date_str'] = wrld_cases['date'].dt.strftime('%Y-%m-%d')
+    wrld_cases = wrld_cases.sort_values(['country', 'date'])
+    wrld_cases['num_days'] = wrld_cases.groupby('country').apply(
         lambda x: (x['date'] - x['date'].min()).dt.days).values
 
-    wrld.to_json('data/world.json', orient='records')
+    wrld_mortality = wrld_mortality.rename(
+        columns={'Country/Region': 'country'})
+    wrld_mortality['date'] = pd.to_datetime(wrld_mortality['date'])
+    wrld_mortality['date_str'] = wrld_mortality['date'].dt.strftime('%Y-%m-%d')
+    wrld_mortality = wrld_mortality.sort_values(['country', 'date'])
+    wrld_mortality['num_days'] = wrld_mortality.groupby('country').apply(
+        lambda x: (x['date'] - x['date'].min()).dt.days).values
+
+    wrld_recovered = wrld_recovered.rename(
+        columns={'Country/Region': 'country'})
+    wrld_recovered['date'] = pd.to_datetime(wrld_recovered['date'])
+    wrld_recovered['date_str'] = wrld_cases['date'].dt.strftime('%Y-%m-%d')
+    wrld_recovered = wrld_recovered.sort_values(['country', 'date'])
+    wrld_recovered['num_days'] = wrld_recovered.groupby('country').apply(
+        lambda x: (x['date'] - x['date'].min()).dt.days).values
+
+    wrld_cases.to_json('data/worldCases.json', orient='records')
+    wrld_recovered.to_json('data/worldMortality.json', orient='records')
+    wrld_recovered.to_json('data/worldRecovered.json', orient='records')
 
     can_cases = pd.read_csv('data/Canada-Cases.csv')
     can_mortality = pd.read_csv('data/Canada-Mortality.csv')
@@ -76,7 +89,8 @@ def main():
         can_mortality['date'], format='%d-%m-%Y')
     can_mortality['count'] = 1
     can_recovered = can_recovered.rename(
-        columns={'date_recovered': 'date', 'cumulative_recovered': 'cumulative'}
+        columns={'date_recovered': 'date',
+                 'cumulative_recovered': 'cumulative'}
         )[recovered_columns]
     can_recovered['date'] = pd.to_datetime(
         can_recovered['date'], format='%d-%m-%Y')
@@ -84,23 +98,31 @@ def main():
     can_cases['age'] = can_cases['age'].apply(group_age)
     can_mortality['age'] = can_mortality['age'].apply(group_age)
 
-    can_counts = can_cases.groupby(['province', 'age', 'date']).count().join(
-        can_mortality.groupby(['province', 'age', 'date']).count(),
-        lsuffix='_cases', rsuffix='_mortality'
-        ).reset_index()
-
     can_recovered = can_recovered.sort_values(['province', 'date'])
     can_recovered = can_recovered.dropna().copy()
     can_recovered['count_recovered'] = can_recovered.groupby('province').apply(
         lambda g: g['cumulative'].diff()).fillna(0).values
     can_recovered = can_recovered[can_recovered['count_recovered'] > 0].copy()
-    can_recovered['age'] = 'N/A'
-    can_counts = can_counts.merge(
-        can_recovered, how='outer',
-        on=['province', 'date', 'age']
-        )
-    can_counts = can_counts.fillna(0)
-    can_counts.to_json('data/canada.json', orient='records')
+
+    can_cases = can_cases.groupby(['province', 'age', 'date']).count()
+    can_mortality = can_mortality.groupby(['province', 'age', 'date']).count()
+
+    can_cases['num_days'] = can_cases.groupby('province').apply(
+        lambda x: (x['date'] - x['date'].min()).dt.days).values
+    can_mortality['num_days'] = can_mortality.groupby('province').apply(
+        lambda x: (x['date'] - x['date'].min()).dt.days).values
+    can_recovered['num_days'] = can_recovered.groupby('province').apply(
+        lambda x: (x['date'] - x['date'].min()).dt.days).values
+    can_cases['date_str'] = can_cases['date'].dt.strftime('%Y-%m-%d')
+    can_mortality['date_str'] = can_mortality['date'].dt.strftime('%Y-%m-%d')
+    can_recovered['date_str'] = can_recovered['date'].dt.strftime('%Y-%m-%d')
+
+    can_cases.to_json(
+        'data/canadaCases.json', orient='records')
+    can_mortality.to_json(
+        'data/canadaMortality.json', orient='records')
+    can_recovered.to_json(
+        'data/canadaRecovered.json', orient='records')
 
 
 def group_age(age):
