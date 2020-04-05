@@ -2,4 +2,3 @@
 credentials
 __pycache__
 *.bak
-data/*

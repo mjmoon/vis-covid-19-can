@@ -5,6 +5,8 @@ import numpy as np
 import re
 from py import RetrieveCanada
 from py import RetrieveGlobal
+from py.helper import get_population_country
+from py.helper import get_population_province
 
 
 def main():
@@ -45,45 +47,60 @@ def world_to_json():
     wrld_cases = pd.read_csv('data/World-confirmed.csv')
     wrld_mortality = pd.read_csv('data/World-deaths.csv')
     wrld_recovered = pd.read_csv('data/World-recovered.csv')
+    pops = get_population_country()
 
-    wrld_cases = wrld_cases.melt(
-        id_vars=['Country/Region', 'Province/State', 'Lat', 'Long'],
-        var_name='date', value_name='count_cases'
-        )[['Country/Region', 'date', 'count_cases']]
-    wrld_cases = wrld_cases[wrld_cases['count_cases'] > 0]
-    wrld_mortality = wrld_mortality.melt(
-        id_vars=['Country/Region', 'Province/State', 'Lat', 'Long'],
-        var_name='date', value_name='count_mortality'
-        )[['Country/Region', 'date', 'count_mortality']]
-    wrld_mortality = wrld_mortality[wrld_mortality['count_mortality'] > 0]
-    wrld_recovered = wrld_recovered.melt(
-        id_vars=['Country/Region', 'Province/State', 'Lat', 'Long'],
-        var_name='date', value_name='count_recovered'
-    )[['Country/Region', 'date', 'count_recovered']]
-    wrld_recovered = wrld_recovered[wrld_recovered['count_recovered'] > 0]
+    def prep_world(df, pops):
+        """Prepare world count data for plotting."""
+        country_matching = {
+            'Burma': 'Myanmar',
+            'Cabo Verde': 'Cape Verde',
+            'Congo (Kinshasa)': 'DR Congo',
+            'Congo (Brazzaville)': 'Congo',
+            "Cote d'Ivoire": 'Ivory Coast',
+            'Czechia': 'Czech Republic',
+            'Holy See': 'Vatican City',
+            'Korea, South': 'South Korea',
+            'Taiwan*': 'Taiwan',
+            'US': 'United States',
+            'Timor-Leste': 'East Timor'
+        }
+        df = df.rename(columns={'Country/Region': 'country'})
+        df['country'] = df['country'].replace(country_matching)
+        df = df.groupby('country').sum().reset_index().melt(
+            id_vars=['country', 'Lat', 'Long'],
+            var_name='date', value_name='cumsum'
+            )
+        df['date'] = pd.to_datetime(df['date'], format='%m/%d/%y')
+        df = df.sort_values(
+            ['country', 'date']
+        ).reset_index()[['country', 'date', 'cumsum']]
 
-    wrld_cases = wrld_cases.rename(columns={'Country/Region': 'country'})
-    wrld_cases['date'] = pd.to_datetime(wrld_cases['date'])
-    wrld_cases['date_str'] = wrld_cases['date'].dt.strftime('%Y-%m-%d')
-    wrld_cases = wrld_cases.sort_values(['country', 'date'])
-    wrld_cases['num_days'] = wrld_cases.groupby('country').apply(
-        lambda x: (x['date'] - x['date'].min()).dt.days).values
+        df['count'] = df.groupby('country').apply(
+            lambda g: g['cumsum'].diff()).fillna(0).values
+        df = df[df['count'] != 0].reset_index().copy()
+        df['date_str'] = df['date'].dt.strftime('%Y-%m-%d')
+        df['num_days'] = df.groupby('country').apply(
+            lambda x: (x['date'] - x['date'].min()).dt.days).values
 
-    wrld_mortality = wrld_mortality.rename(
-        columns={'Country/Region': 'country'})
-    wrld_mortality['date'] = pd.to_datetime(wrld_mortality['date'])
-    wrld_mortality['date_str'] = wrld_mortality['date'].dt.strftime('%Y-%m-%d')
-    wrld_mortality = wrld_mortality.sort_values(['country', 'date'])
-    wrld_mortality['num_days'] = wrld_mortality.groupby('country').apply(
-        lambda x: (x['date'] - x['date'].min()).dt.days).values
+        no_match = set([
+            x for x in df['country']
+            if x not in pops.index
+        ])
+        if no_match:
+            print(', '.join(no_match) + ' not matched.')
 
-    wrld_recovered = wrld_recovered.rename(
-        columns={'Country/Region': 'country'})
-    wrld_recovered['date'] = pd.to_datetime(wrld_recovered['date'])
-    wrld_recovered['date_str'] = wrld_cases['date'].dt.strftime('%Y-%m-%d')
-    wrld_recovered = wrld_recovered.sort_values(['country', 'date'])
-    wrld_recovered['num_days'] = wrld_recovered.groupby('country').apply(
-        lambda x: (x['date'] - x['date'].min()).dt.days).values
+        df = df.set_index('country').join(pops).reset_index()
+        df['count_per_MM'] = df['count']/df['population']*1000000
+        df['cumsum_per_MM'] = df['cumsum']/df['population']*1000000
+        return df[[
+            'country', 'date', 'num_days',
+            'count', 'cumsum',
+            'count_per_MM', 'cumsum_per_MM'
+        ]]
+
+    wrld_cases = prep_world(wrld_cases, pops)
+    wrld_mortality = prep_world(wrld_mortality, pops)
+    wrld_recovered = prep_world(wrld_recovered, pops)
 
     wrld_cases.to_json('data/worldCases.json', orient='records')
     wrld_recovered.to_json('data/worldMortality.json', orient='records')
@@ -95,53 +112,83 @@ def canada_to_json():
     can_cases = pd.read_csv('data/Canada-Cases.csv')
     can_mortality = pd.read_csv('data/Canada-Mortality.csv')
     can_recovered = pd.read_csv('data/Canada-Recovered.csv')
+    pops = get_population_province()
 
-    join_columns = ['province', 'age', 'date']
-    recovered_columns = ['province', 'date', 'cumulative']
+    def prep_canada_age(df):
+        """Prepare Canada count data by age group for plotting."""
+        df.columns = df.columns.str.replace(
+            r'date_report|date_death_report', 'date')
+        df = df[['province', 'age', 'date']].copy()
+        df['date'] = pd.to_datetime(
+            df['date'], format='%d-%m-%Y')
+        df['count'] = 1
+        df['age'] = df['age'].apply(group_age)
+        df = df.groupby(
+            ['province', 'date', 'age']).count().reset_index()
+        df['cumsum'] = df.groupby(['province', 'age']).cumsum()
+        df['num_days'] = df.groupby('province').apply(
+            lambda x: (x['date'] - x['date'].min()).dt.days).values
+        df['date_str'] = df['date'].dt.strftime('%Y-%m-%d')
+        return df[[
+            'province', 'date', 'date_str', 'num_days',
+            'age', 'count', 'cumsum']]
 
-    can_cases = can_cases.rename(
-        columns={'date_report': 'date'}
-        )[join_columns]
-    can_cases['date'] = pd.to_datetime(
-        can_cases['date'], format='%d-%m-%Y')
-    can_cases['count'] = 1
-    can_mortality = can_mortality.rename(
-        columns={'date_death_report': 'date'}
-        )[join_columns]
-    can_mortality['date'] = pd.to_datetime(
-        can_mortality['date'], format='%d-%m-%Y')
-    can_mortality['count'] = 1
-    can_recovered = can_recovered.rename(
-        columns={'date_recovered': 'date',
-                 'cumulative_recovered': 'cumulative'}
-        )[recovered_columns]
-    can_recovered['date'] = pd.to_datetime(
-        can_recovered['date'], format='%d-%m-%Y')
+    def prep_canada(df, pops):
+        """Prepare Canada count data for plotting."""
+        province_matching = {
+            'NL': 'Newfoundland and Labrador',
+            'BC': 'British Columbia',
+            'NWT': 'Northwest Territories',
+            'PEI': 'Prince Edward Island'
+        }
+        df['province'] = df['province'].replace(province_matching)
+        df.columns = df.columns.str.replace(
+            r'date_report|date_death_report|date_recovered', 'date')
+        df['date'] = pd.to_datetime(
+            df['date'], format='%d-%m-%Y')
+        if 'cumulative_recovered' in df.columns:
+            df = df.rename(columns={'cumulative_recovered': 'cumsum'})
+            df = df[['province', 'date', 'cumsum']]
+            df = df.sort_values(['province', 'date'])
+            df['count'] = df.groupby('province').apply(
+                lambda g: g['cumsum'].diff()).fillna(0).values
+            df = df[df['count'] > 0].copy()
+        else:
+            df = df[['province', 'date']].copy()
+            df['count'] = 1
+            df = df.groupby(
+                ['province', 'date']).count().reset_index()
+            df['cumsum'] = df.groupby('province').cumsum()
 
-    can_cases['age'] = can_cases['age'].apply(group_age)
-    can_mortality['age'] = can_mortality['age'].apply(group_age)
+        df['num_days'] = df.groupby('province').apply(
+            lambda x: (x['date'] - x['date'].min()).dt.days).values
+        df['date_str'] = df['date'].dt.strftime('%Y-%m-%d')
 
-    can_recovered = can_recovered.sort_values(['province', 'date'])
-    can_recovered = can_recovered.dropna().copy()
-    can_recovered['count_recovered'] = can_recovered.groupby('province').apply(
-        lambda g: g['cumulative'].diff()).fillna(0).values
-    can_recovered = can_recovered[can_recovered['count_recovered'] > 0].copy()
+        no_match = set([
+            x for x in df['province']
+            if x not in pops.index
+        ])
+        if no_match:
+            print(', '.join(no_match) + ' not matched.')
 
-    can_cases = can_cases.groupby(
-        ['province', 'age', 'date']).count().reset_index()
-    can_mortality = can_mortality.groupby(
-        ['province', 'age', 'date']).count().reset_index()
+        df = df.set_index('province').join(pops).reset_index()
+        df['count_per_MM'] = df['count']/df['population']*1000000
+        df['cumsum_per_MM'] = df['cumsum']/df['population']*1000000
 
-    can_cases['num_days'] = can_cases.groupby('province').apply(
-        lambda x: (x['date'] - x['date'].min()).dt.days).values
-    can_mortality['num_days'] = can_mortality.groupby('province').apply(
-        lambda x: (x['date'] - x['date'].min()).dt.days).values
-    can_recovered['num_days'] = can_recovered.groupby('province').apply(
-        lambda x: (x['date'] - x['date'].min()).dt.days).values
-    can_cases['date_str'] = can_cases['date'].dt.strftime('%Y-%m-%d')
-    can_mortality['date_str'] = can_mortality['date'].dt.strftime('%Y-%m-%d')
-    can_recovered['date_str'] = can_recovered['date'].dt.strftime('%Y-%m-%d')
+        return df[[
+            'province', 'date', 'date_str', 'num_days',
+            'count', 'cumsum', 'count_per_MM', 'cumsum_per_MM']]
 
+    can_cases_age = prep_canada_age(can_cases)
+    can_mortality_age = prep_canada_age(can_mortality)
+    can_cases = prep_canada(can_cases, pops)
+    can_mortality = prep_canada(can_mortality, pops)
+    can_recovered = prep_canada(can_recovered, pops)
+
+    can_cases_age.to_json(
+        'data/canadaCasesAge.json', orient='records')
+    can_mortality_age.to_json(
+        'data/canadaMortalityAge.json', orient='records')
     can_cases.to_json(
         'data/canadaCases.json', orient='records')
     can_mortality.to_json(

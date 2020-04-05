@@ -1,21 +1,29 @@
 date_testing,province,cumulative_testing,,,province_source,source
-31-03-2020,Alberta,48692,,,Alberta,https://www.alberta.ca/covid-19-alberta-data.aspx
-30-03-2020,Alberta,46057,,,BC,http://www.bccdc.ca/health-info/diseases-conditions/covid-19/case-counts-press-statements
-29-03-2020,Alberta,44999,,,Manitoba,https://www.gov.mb.ca/covid19/index.html
-28-03-2020,Alberta,42527,,,New Brunswick,https://www2.gnb.ca/content/gnb/en/departments/ocmoh/cdc/content/respiratory_diseases/coronavirus.html
-27-03-2020,Alberta,38215,,,NL,https://www.gov.nl.ca/covid-19/
-26-03-2020,Alberta,36660,,,Nova Scotia,https://novascotia.ca/coronavirus/#cases
-25-03-2020,Alberta,35508,,,Nunavut,https://www.gov.nu.ca/
-24-03-2020,Alberta,32776,,,NWT,https://www.hss.gov.nt.ca/en/services/coronavirus-disease-covid-19
-23-03-2020,Alberta,30058,,,Ontario,https://www.ontario.ca/page/2019-novel-coronavirus#section-0
-22-03-2020,Alberta,26999,,,PEI,https://www.princeedwardisland.ca/en/topic/covid-19
-21-03-2020,Alberta,23742,,,Quebec,https://www.msss.gouv.qc.ca/professionnels/maladies-infectieuses/coronavirus-2019-ncov/
-20-03-2020,Alberta,20360,,,Saskatchewan,https://www.saskatchewan.ca/government/health-care-administration-and-provider-resources/treatment-procedures-and-guidelines/emerging-public-health-issues/2019-novel-coronavirus/cases-and-risk-of-covid-19-in-saskatchewan
-19-03-2020,Alberta,17013,,,Yukon,https://yukon.ca/en/information-about-novel-coronavirus-yukoners
+04-04-2020,Alberta,64108,,,Alberta,https://www.alberta.ca/covid-19-alberta-data.aspx
+03-04-2020,Alberta,61960,,,BC,http://www.bccdc.ca/health-info/diseases-conditions/covid-19/case-counts-press-statements
+02-04-2020,Alberta,57096,,,Manitoba,https://www.gov.mb.ca/covid19/index.html
+01-04-2020,Alberta,53141,,,New Brunswick,https://www2.gnb.ca/content/gnb/en/departments/ocmoh/cdc/content/respiratory_diseases/coronavirus.html
+31-03-2020,Alberta,48692,,,NL,https://www.gov.nl.ca/covid-19/
+30-03-2020,Alberta,46057,,,Nova Scotia,https://novascotia.ca/coronavirus/#cases
+29-03-2020,Alberta,44999,,,Nunavut,https://www.gov.nu.ca/
+28-03-2020,Alberta,42527,,,NWT,https://www.hss.gov.nt.ca/en/services/coronavirus-disease-covid-19
+27-03-2020,Alberta,38215,,,Ontario,https://www.ontario.ca/page/2019-novel-coronavirus#section-0
+26-03-2020,Alberta,36660,,,PEI,https://www.princeedwardisland.ca/en/topic/covid-19
+25-03-2020,Alberta,35508,,,Quebec,https://www.msss.gouv.qc.ca/professionnels/maladies-infectieuses/coronavirus-2019-ncov/
+24-03-2020,Alberta,32776,,,Saskatchewan,https://www.saskatchewan.ca/government/health-care-administration-and-provider-resources/treatment-procedures-and-guidelines/emerging-public-health-issues/2019-novel-coronavirus/cases-and-risk-of-covid-19-in-saskatchewan
+23-03-2020,Alberta,30058,,,Yukon,https://yukon.ca/en/information-about-novel-coronavirus-yukoners
+22-03-2020,Alberta,26999,,,,
+21-03-2020,Alberta,23742,,,Note: *Change in reported testing definition,
+20-03-2020,Alberta,20360,,,,
+19-03-2020,Alberta,17013,,,,
 18-03-2020,Alberta,14566,,,,
-17-03-2020,Alberta,12355,,,Note: *Change in reported testing definition,
+17-03-2020,Alberta,12355,,,,
 16-03-2020,Alberta,10598,,,,
 15-03-2020,Alberta,7108,,,,
+04-04-2020,BC,48508,,,,
+03-04-2020,BC,47352,,,,
+02-04-2020,BC,45966,,,,
+01-04-2020,BC,44639,,,,
 31-03-2020,BC,43229,,,,
 30-03-2020,BC,42028,,,,
 29-03-2020,BC,38697,,,,
@@ -33,6 +41,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,BC,6326,,,,
 16-03-2020,BC,6326,,,,
 15-03-2020,BC,6326,,,,
+04-04-2020,Manitoba,12514,,,,
+03-04-2020,Manitoba,11952,,,,
+02-04-2020,Manitoba,11327,,,,
+01-04-2020,Manitoba,10044,,,,
 31-03-2020,Manitoba,8914,,,,
 30-03-2020,Manitoba,8550,,,,
 29-03-2020,Manitoba,7147,,,,
@@ -50,6 +62,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,Manitoba,2912,,,,
 16-03-2020,Manitoba,2280,,,,
 15-03-2020,Manitoba,400,,,,
+04-04-2020,New Brunswick,5348,,,,
+03-04-2020,New Brunswick,4906,,,,
+02-04-2020,New Brunswick,4520,,,,
+01-04-2020,New Brunswick,4030,,,,
 31-03-2020,New Brunswick,3536,,,,
 30-03-2020,New Brunswick,3234,,,,
 29-03-2020,New Brunswick,2931,,,,
@@ -67,6 +83,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,New Brunswick,204,,,,
 16-03-2020,New Brunswick,203,,,,
 15-03-2020,New Brunswick,NA,,,,
+04-04-2020,NL,3386,,,,
+03-04-2020,NL,3201,,,,
+02-04-2020,NL,2929,,,,
+01-04-2020,NL,2816,,,,
 31-03-2020,NL,2575,,,,
 30-03-2020,NL,2332,,,,
 29-03-2020,NL,2107,,,,
@@ -84,6 +104,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,NL,494,,,,
 16-03-2020,NL,161,,,,
 15-03-2020,NL,161,,,,
+04-04-2020,Nova Scotia,9200,,,,
+03-04-2020,Nova Scotia,8441,,,,
+02-04-2020,Nova Scotia,7639,,,,
+01-04-2020,Nova Scotia,6764,,,,
 31-03-2020,Nova Scotia,5910,,,,
 30-03-2020,Nova Scotia,5172,,,,
 29-03-2020,Nova Scotia,4853,,,,
@@ -101,6 +125,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,Nova Scotia,941,,,,
 16-03-2020,Nova Scotia,676,,,,
 15-03-2020,Nova Scotia,418,,,,
+04-04-2020,Ontario,71338,,,,
+03-04-2020,Ontario,66753,,,,
+02-04-2020,Ontario,62733,,,,
+01-04-2020,Ontario,57874,,,,
 31-03-2020,Ontario,51629,,,,
 30-03-2020,Ontario,48461*,,,,
 29-03-2020,Ontario,49186,,,,
@@ -118,6 +146,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,Ontario,11171,,,,
 16-03-2020,Ontario,10178,,,,
 15-03-2020,Ontario,8465,,,,
+04-04-2020,PEI,1268,,,,
+03-04-2020,PEI,1099,,,,
+02-04-2020,PEI,958,,,,
+01-04-2020,PEI,870,,,,
 31-03-2020,PEI,838,,,,
 30-03-2020,PEI,769,,,,
 29-03-2020,PEI,622,,,,
@@ -135,6 +167,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,PEI,147,,,,
 16-03-2020,PEI,147,,,,
 15-03-2020,PEI,78,,,,
+04-04-2020,Quebec,94106,,,,
+03-04-2020,Quebec,87803,,,,
+02-04-2020,Quebec,79413,,,,
+01-04-2020,Quebec,75463,,,,
 31-03-2020,Quebec,73141,,,,
 30-03-2020,Quebec,65915,,,,
 29-03-2020,Quebec,58517,,,,
@@ -152,6 +188,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,Quebec,7801,,,,
 16-03-2020,Quebec,6202,,,,
 15-03-2020,Quebec,NA,,,,
+04-04-2020,Saskatchewan,12670,,,,
+03-04-2020,Saskatchewan,12112,,,,
+02-04-2020,Saskatchewan,11395,,,,
+01-04-2020,Saskatchewan,10528,,,,
 31-03-2020,Saskatchewan,10126,,,,
 30-03-2020,Saskatchewan,9651,,,,
 29-03-2020,Saskatchewan,9086,,,,
@@ -169,6 +209,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,Saskatchewan,1107,,,,
 16-03-2020,Saskatchewan,1107,,,,
 15-03-2020,Saskatchewan,796,,,,
+04-04-2020,NWT,1280,,,,
+03-04-2020,NWT,1258,,,,
+02-04-2020,NWT,1167,,,,
+01-04-2020,NWT,1109,,,,
 31-03-2020,NWT,1091,,,,
 30-03-2020,NWT,833,,,,
 29-03-2020,NWT,817,,,,
@@ -186,6 +230,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,NWT,153,,,,
 16-03-2020,NWT,NA,,,,
 15-03-2020,NWT,NA,,,,
+04-04-2020,Nunavut,314,,,,
+03-04-2020,Nunavut,314,,,,
+02-04-2020,Nunavut,290,,,,
+01-04-2020,Nunavut,290,,,,
 31-03-2020,Nunavut,259,,,,
 30-03-2020,Nunavut,259,,,,
 29-03-2020,Nunavut,207,,,,
@@ -203,6 +251,10 @@ date_testing,province,cumulative_testing,,,province_source,source
 17-03-2020,Nunavut,NA,,,,
 16-03-2020,Nunavut,NA,,,,
 15-03-2020,Nunavut,NA,,,,
+04-04-2020,Yukon,753,,,,
+03-04-2020,Yukon,753,,,,
+02-04-2020,Yukon,722,,,,
+01-04-2020,Yukon,722,,,,
 31-03-2020,Yukon,688,,,,
 30-03-2020,Yukon,688,,,,
 29-03-2020,Yukon,603,,,,
